@@ -8,7 +8,7 @@ Michael Holberger
 
 **Financial Market Combined Indicator using LSTM Model**
 
-Domain Background
+# Domain Background
 
 Since the invention of computers, people have been engineering ways to use them to create an edge in investment markets. Being able to do calculations quickly, using current data enables traders to make educated trading decisions on when to enter or exit a market. Algorithmic trading has been a growing practice in recent decades as computational technologies became capable of employing high frequency trading strategies. Today, high frequency trading dominates public market trading.
 
@@ -18,29 +18,29 @@ The incentive to create profitable trading system is primarily financial. Ideall
 
 Many techniques for analyzing a market based on price data currently exist. New, machine learning algorithms offer the possibility of dramatic improvements.  Some popularly used technical analysis indicators include Relative Strength Index and Moving Average Convergence/Divergence, which are calculated using price data from a set of previous intervals.
 
-Problem Statement
+# Problem Statement
 
 This project uses machine learning techniques to attempt to predict the short term movement of certain cryptocurrency trading prices using multiple technical indicators, so that short term trades can realize profits in volatile market conditions.  Success is measured by comparing the results of short term trades indicated by the model with buy-and-hold trading.
 
-Datasets and Inputs
+# Datasets and Inputs
 
 Price data was collected on the cryptocurrency assets traded against BTC on the Bittrex.com marketplace between Nov 2017 and June 2018. Data is organized into 5-minute period samples (referred to as _candles_) which include the opening and closing prices for that period, as well as the highest/lowest prices and trade volume.
 
 This data is then pre-processed using several traditional technical analysis indicators such as Exponential Moving Averages (EMA), Commodity Channel Index (CCI), and Moving Average Convergence/Divergence (MACD), which are calculated using a selected number of previous data points. These indicators will be added as features alongside the price data as inputs into our predictive model.
 
-Solution Statement
+# Solution Statement
 
 Using the price data obtained from several cryptocurrency markets, pre-processed for technical indicators commonly used by career stock market traders, we will implement machine/deep learning techniques to develop a model that will make price predictions in much the same way a successful human trader would. This will allow us to employ a more educated and profitable trading strategy.
 
-Benchmark Model
+# Benchmark Model
 
 The completed model will be used to make predictions several steps ahead in time. These can then be compared to a buy and hold strategy. During the time in which the data was collected, markets were generally falling in price, causing the buy-and-hold strategy to generally result in losses. Using the model to predict movement should allow us to make trading decisions that result in greater profit than a buy and hold strategy. By plotting the predicted price line against the true price data, it will then be apparent whether or not the predictions are useful.
 
-Evaluation Metrics
+# Evaluation Metrics
 
 Mean Squared Error (MSE) will be used to compute loss for each batch of time-sequences within each training session. For each training epoch, the model trains through 40 different sets of market data, divided into training and cross-validation sets, from start to finish. After training a market data segment, the training MSE is recorded. Then point-by-point predictions from the cross-validation segment of that market&#39;s data are evaluated and recorded. The MSE results for training and cross-validation are then plotted for analysis. After the completion of several epochs, a final set of data reserved for testing will be used to make predictions to be evaluated against our previously stated benchmark.
 
-Project Design
+# Project Design
 
 The data must first be pre-processed for the technical indicators that have been selected. This will be done using the python wrapper for TA-Lib: a programming library which includes a large collection of methods for calculating indicators, and is considered industry standard by financial technology developers. These new data features will then be added as columns to the dataset.
 
