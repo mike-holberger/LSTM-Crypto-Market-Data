@@ -1,182 +1,49 @@
-# DeepRL Quadcopter Controller
+# Machine Learning Nanodegree
 
-_Teach a Quadcopter How to Fly!_
+# Capstone Proposal
 
-In this project, you will design a Deep Reinforcement Learning agent to control several quadcopter flying tasks, including take-off, hover and landing.
+Michael Holberger
 
+10/1/2018
 
-# Table of Contents
+**Financial Market Combined Indicator using LSTM Model**
 
-- [My Code](#mycode)
-- [Install](#install)
-- [Download](#download)
-- [Develop](#develop)
-- [Submit](#submit)
+Domain Background
 
-# My Code
-In the [quad_controller_rl](https://github.com/elberman/RL-Quadcopter/tree/master/quad_controller_rl/src/quad_controller_rl) folder, you can find my DDPG Agents and Tasks for the project. In the [notebooks](https://github.com/elberman/RL-Quadcopter/tree/master/quad_controller_rl/notebooks) you can find the python notebook with my reflections and some selected reward/training graphs.
+Since the invention of computers, people have been engineering ways to use them to create an edge in investment markets. Being able to do calculations quickly, using current data enables traders to make educated trading decisions on when to enter or exit a market. Algorithmic trading has been a growing practice in recent decades as computational technologies became capable of employing high frequency trading strategies. Today, high frequency trading dominates public market trading.
 
-I'd also like to give credit to Udacity and my mentor Leticia for their help in this project. I would not have been able to do it without them.
+Cryptocurrency markets democratize and accelerate this practice, in that many of the barriers for high-frequency trading in stock markets do not exist in the popular &quot;alternative-coin&quot; exchanges hosted on internet. Using the programmatic interfaces for these exchanges thousands of trades can be made daily, incurring minimal fees. Traders that employ systems to make split-second decisions (bots) have permeated these markets.
 
-# Install
+The incentive to create profitable trading system is primarily financial. Ideally an automated system can be created to gather current data, formulate predictions on market direction on which to trade, execute those trades, all with minimal intervention required by the user. However, a system which is perfectly profitable in all conditions is highly unlikely, as the stochastic movement of price line data his highly unpredictable, and is the equivalent of what is known as a &quot;random walk&quot;. No single technical analysis (TA) indicator that currently exists can be relied upon alone. However, it may be possible that using some combination of indicators will supplement the trader&#39;s judgement, allowing them to make a career out of trading.
 
-This project uses ROS (Robot Operating System) as the primary communication mechanism between your agent and the simulation. You can either install it on your own machine ("native install"), or use a Udacity-provided Virtual Machine (recommended).
+Many techniques for analyzing a market based on price data currently exist. New, machine learning algorithms offer the possibility of dramatic improvements.  Some popularly used technical analysis indicators include Relative Strength Index and Moving Average Convergence/Divergence, which are calculated using price data from a set of previous intervals.
 
-## ROS Virtual Machine
+Problem Statement
 
-Download the compressed VM disk image and unzip it:
+This project uses machine learning techniques to attempt to predict the short term movement of certain cryptocurrency trading prices using multiple technical indicators, so that short term trades can realize profits in volatile market conditions.  Success is measured by comparing the results of short term trades indicated by the model with buy-and-hold trading.
 
-- Compressed VM Disk Image: [RoboVM_V2.1.0.zip](https://s3-us-west-1.amazonaws.com/udacity-robotics/Virtual+Machines/Lubuntu_071917/RoboVM_V2.1.0.zip)
-- MD5 checksum: `MD5(Ubuntu 64-bit Robo V2.1.0.ova)= 95bfba89fbdac5f2c0a2be2ae186ddbb`
+Datasets and Inputs
 
-You will need a Virtual Machine player to run the VM, such as VMWare or VirtualBox:
+Price data was collected on the cryptocurrency assets traded against BTC on the Bittrex.com marketplace between Nov 2017 and June 2018. Data is organized into 5-minute period samples (referred to as _candles_) which include the opening and closing prices for that period, as well as the highest/lowest prices and trade volume.
 
-- [VMWare](http://www.vmware.com/): If you use a Windows/Linux system, you can get [Workstation Player](https://www.vmware.com/products/workstation-player/workstation-player-evaluation.html) for free, or if you're on a Mac, you can get a trial of [Fusion](https://www.vmware.com/products/fusion.html).
-- [VirtualBox](https://www.virtualbox.org/): Download and install the appropriate version for your system.
+This data is then pre-processed using several traditional technical analysis indicators such as Exponential Moving Averages (EMA), Commodity Channel Index (CCI), and Moving Average Convergence/Divergence (MACD), which are calculated using a selected number of previous data points. These indicators will be added as features alongside the price data as inputs into our predictive model.
 
-Open your VM player, and then "Open" / "Import" the VM disk image that you just unzipped (the `.ova` file).
+Solution Statement
 
-Configure the settings for your VM to allocate at least 2 processors and 4GB of RAM (more the merrier!). Now launch the VM, and follow the on-screen instructions for one-time setup steps.
+Using the price data obtained from several cryptocurrency markets, pre-processed for technical indicators commonly used by career stock market traders, we will implement machine/deep learning techniques to develop a model that will make price predictions in much the same way a successful human trader would. This will allow us to employ a more educated and profitable trading strategy.
 
-- Username: `robond`
-- Password: `robo-nd`
+Benchmark Model
 
-To open a terminal in your VM, press `Ctrl+Alt+T`. If prompted "Do you want to source ROS?", answer `y` (yes). This is where you will execute your project code.
+The completed model will be used to make predictions several steps ahead in time. These can then be compared to a buy and hold strategy. During the time in which the data was collected, markets were generally falling in price, causing the buy-and-hold strategy to generally result in losses. Using the model to predict movement should allow us to make trading decisions that result in greater profit than a buy and hold strategy. By plotting the predicted price line against the true price data, it will then be apparent whether or not the predictions are useful.
 
-## ROS Native Install
+Evaluation Metrics
 
-If you choose to install ROS (Robot Operating System) on your own machine, it is recommended that you use Ubuntu 16.04 LTS as your operating system. To install ROS, please follow the instructions here: [ROS Installation](http://wiki.ros.org/kinetic/Installation)
+Mean Squared Error (MSE) will be used to compute loss for each batch of time-sequences within each training session. For each training epoch, the model trains through 40 different sets of market data, divided into training and cross-validation sets, from start to finish. After training a market data segment, the training MSE is recorded. Then point-by-point predictions from the cross-validation segment of that market&#39;s data are evaluated and recorded. The MSE results for training and cross-validation are then plotted for analysis. After the completion of several epochs, a final set of data reserved for testing will be used to make predictions to be evaluated against our previously stated benchmark.
 
-_Note: This method is not supported by Udacity. If you have trouble performing a native install of ROS, please visit [ROS answers](http://answers.ros.org/questions/) or you can try troubleshooting your install with other students in the Udacity Robotics Slack community ([robotics.udacity.com](https://www.robotics.udacity.com)) in the **#ros** channel._
+Project Design
 
+The data must first be pre-processed for the technical indicators that have been selected. This will be done using the python wrapper for TA-Lib: a programming library which includes a large collection of methods for calculating indicators, and is considered industry standard by financial technology developers. These new data features will then be added as columns to the dataset.
 
-# Download
+The nature of the price data is non-stationary, so the data must first be normalized before it is used to train the model. There are various methods for data normalization which must be tested for efficacy. Some techniques for data normalization that will be tested include standard scaling, which employs averaging, and MinMax scaling, which normalizes data based on its highest and lowest values. After either of these methods of normalization, a wavelet transform will be applied to each column and preliminarily tested to see if its application makes any significant improvement in prediction accuracy. This will be done by training a simple model with default parameters on a section of our total data. The prediction results will then be plotted and assessed based on factors such as preliminary MSE scores, prediction line accuracy, and how clearly the pre-normalized price data is represented after normalization.
 
-## Project Code
-
-On the machine where you have installed ROS (a VM, or your local machine), create a directory named `catkin_ws`, and inside it create a subdirectory named `src`. If you're using a VM, you can also share a folder on your file-system between the host and VM. That might make it easier for you to prepare your report and submit your project for review.
-
-Now clone this repository or download it inside the `src` directory. This is where you will develop your project code. Your folder structure should look like the following (ROS has a fairly complicated build system, as you will see!):
-
-```
-- ~/catkin_ws/
-  - src/
-    - RL-Quadcopter/
-      - quad_controller_rl/
-        - ...
-```
-
-The root of this structure (`catkin_ws`) is a [catkin workspace](http://wiki.ros.org/catkin/workspaces), which you can use to organize and work on all your ROS-based projects (the name `catkin_ws` is not mandatory - you can change it to anything you want).
-
-## Python Packages
-
-Install the Python packages necessary for this project, listed in `requirements.txt`:
-
-```bash
-$ pip3 install -r requirements.txt
-```
-
-You may need some additional packages, depending on what framework or library you intend to use, e.g. TensorFlow, Keras, PyTorch, etc. Now is a good time to ensure you have these installed.
-
-## Simulator
-
-Download the Udacity Quadcopter Simulator, nicknamed **DroneSim**, for your host computer OS [here](https://github.com/udacity/RoboND-Controls-Lab/releases). 
-
-To start the simulator, simply run the downloaded executable file. You may need to run the simulator _after_ the `roslaunch` step mentioned below in the Run section, so that it can connect to a running ROS master.
-
-_Note: If you are using a Virtual Machine (VM), you cannot run the simulator inside the VM. You have to download and run the simulator for your **host operating system** and connect it to your VM (see below)._
-
-### Connecting the Simulator to a VM
-
-If you are running ROS in a VM, there are a couple of steps necessary to make sure it can communicate with the simulator running on your host system. If not using a VM, these steps are not needed.
-
-#### Enable Networking on VM
-
-- **VMWare**: The default setting should work. To verify, with the VM runnning, go to the Virtual Machine menu > Network Adapter. NAT should be selected.
-- **VirtualBox**:
-  1. In the VirtualBox Manager, go to Global Tools (top-right corner) > Host Network Manager.
-  2. Create a new Host-only Network. You can leave the default settings, e.g. Name = "vboxnet0", Ipv4 Address/Mask = "192.168.56.1/24", and DHCP Server enabled.
-  3. Switch back to Machine Tools, and with your VM selected, open its Settings.
-  4. Go to the Network tab, change "Attached to" (network type) to "Host-only Adapter", and pick "vboxnet0" from the "Name" dropdown.
-  5. Hit Ok to save, and (re)start the VM.
-
-#### Obtain IP Addresses for Host and VM
-
-In a terminal on your host computer, run `ifconfig`. It will list all the network interfaces available, both physical and virtual. There should be one named something like `vmnet` or `vboxnet`. Note the IP address (`inet` or `inet addr`) mentioned for that interface, e.g. `192.168.56.1`. This is your **Host IP address**.
-
-Do the same inside the VM. Here the interface may have a different name, but the IP address should have a common prefix. Note down the complete IP address, e.g. `192.168.56.101` - this your **VM IP address**.
-
-#### Edit Simulator Settings
-
-Inside the simulator's `_Data` or `/Contents` folder (on Mac, right-click the app > Show Package Contents), edit `ros_settings.txt`:
-
-- Set `vm-ip` to the **VM IP address** and set `vm-override` to `true`.
-- Set `host-ip` to the **Host IP address** and set `host-override` to `true`.
-
-The host and/or VM's IP address can change when it is restarted. If you are experiencing connectivity problems, be sure to check that the actual IP addresses match what you have in `ros_settings.txt`.
-
-
-# Develop
-
-Starter code is provided in `quad_controller_rl/` with all the Python modules (`.py` files) under the `src/quad_controller_rl/` package, and the main project notebook under `notebooks/`. Take a look at the files there, but you do not have to make any changes to the code at this point. Complete the following two steps first (**Build** and **Run**), to ensure your ROS installation is working correctly.
-
-## Build
-
-To prepare your code to run with ROS, you will first need to build it. This compiles and links different modules ("ROS nodes") needed for the project. Fortunately, you should only need to do this once, since changes to Python scripts don't need recompilation.
-
-- Go to your catkin workspace (`catkin_ws/`):
-
-```bash
-$ cd ~/catkin_ws/
-```
-
-- Build ROS nodes:
-
-```bash
-$ catkin_make
-```
-
-- Enable command-line tab-completion and some other useful ROS utilities:
-
-```bash
-$ source devel/setup.bash
-```
-
-## Run
-
-To run your project, start ROS with the `rl_controller.launch` file:
-
-```bash
-$ roslaunch quad_controller_rl rl_controller.launch
-```
-
-You should see a few messages on the terminal as different nodes get spun up. Now you can run the simulator, which is a separate Unity application (note that you must start ROS first, and then run the simulator). Once the simulator initializes itself, you should start seeing additional messages in your ROS terminal, indicating a new episode starting every few seconds. The quadcopter in the simulation should show its blades running as it gets control inputs from the agent, and it should reset at the beginning of each episode.
-
-Tip: If you get tired of this two-step startup process, edit the `quad_controller_rl/scripts/drone_sim` script and enter a command that runs the simulator application. It will then be launched automatically with ROS!
-
-_Note: If you want to learn more about how ROS works and how you can use it for robotics applications, you may enroll in Udacity's [Robotics Nanodegree Program](https://www.udacity.com/robotics) and can take the [ROS Essentials](https://classroom.udacity.com/nanodegrees/nd209/parts/af07ae99-7d69-4b45-ab98-3fde8b576a16) module._
-
-## Implement
-
-Once you have made sure ROS and the simulator are running without any errors, and that they can communicate with each other, try modifying the code in `agents/policy_search.py` - this is a sample agent that runs by default (e.g. add a `print` statement). Every time you make a change, you will need to stop the simulator (press `Esc` with the simulator window active), and shutdown ROS (press `Ctrl+C` in the terminal). Save your change, and `roslaunch` again.
-
-Now you should be ready to start coding! Open the project notebook for further instructions (assuming you are in your catkin workspace):
-
-```bash
-$ jupyter notebook src/RL-Quadcopter/quad_controller_rl/notebooks/RL-Quadcopter.ipynb
-```
-
-# Submit
-
-Complete the required sections in the notebook. Once done, save/export the notebook as a PDF or HTML file. This will serve as your project report.
-
-If you are enrolled in a Udacity Nanodegree program, you can submit your completed project for review. Prepare and upload a zip file that includes the following:
-
-- `RL-Quadcopter.ipynb`: Project notebook with all sections completed.
-- `RL-Quadcopter.pdf` / `RL-Quadcopter.html`: PDF or HTML report (which can be an export of the notebook).
-- `quad_controller_rl/`: Python package with your code in the following sub-packages:
-  - `tasks/`: Your implementation of each task required for this project.
-  - `agents/`: Agents you've implemented for the corresponding tasks.
-  - Any other supporting code or other files used by your project.
-
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>. Please refer to [Udacity Terms of Service](https://www.udacity.com/legal) for further information.
+In preparation for training the model, the data, now including TA indicators, is divided into batches of a specified number of consecutive data points. Data windows are generated frame-by-frame within each batch. The model is designed to predict one step ahead for each of these data windows.  Each data window/sequence is then normalized before being input into a neural-network model, including several Long/Short Term Memory layers for training. LSTM layers were developed to be more effective in making predictions based on time-sequenced data than regular, fully-connected neural-network layers. The model&#39;s predictions will then be evaluated by using the segments of data pre-designated for cross-validation. Training will resume until it appears the model is making effective predictions, without overfitting the dataset. Different combinations of layer/node organization and hyper-parameter configuration will be trained and evaluated in this way for predictive power.
